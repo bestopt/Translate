@@ -1,3 +1,12 @@
 <resources>
     <string name="app_name">Translate Nordic</string>
+    <string name="translate">Translate</string>
+    <string name="yandex_sevice">«Переведено сервисом «Яндекс.Переводчик»</string>
+    <string name="dialog_title">Обновление данных</string>
+    <string name="dialog_message">Пожалуйста, подождите...</string>
+    <string name="delete_message">Действительно удалить хотите?</string>
+    <string name="empty_data_text">Нет подключения к сети Интернет.\nПроверьте подкдючение.</string>
+    <dimen name="size_36">36dp</dimen>
+    <dimen name="size_16">16dp</dimen>
+    <dimen name="size_8">8dp</dimen>
 </resources>
