@@ -1,7 +1,7 @@
 package com.x5bart.translatenordic.ui
 
 
-import android.app.ProgressDialog
+import android.app.AlertDialog
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.DialogInterface
@@ -21,7 +21,9 @@ import android.widget.LinearLayout
 import android.widget.RelativeLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.cardview.widget.CardView
 import androidx.fragment.app.Fragment
+import com.x5bart.translatenordic.model.Lang
 
 //import com.andrey.translator.R
 //import com.andrey.translator.model.Favorite
@@ -39,10 +41,13 @@ import androidx.fragment.app.Fragment
 //
 //import java.util.HashMap
 //
-//import butterknife.BindView
-//import butterknife.ButterKnife
-//import butterknife.OnClick
-//import butterknife.Unbinder
+import butterknife.BindView
+import butterknife.ButterKnife
+import butterknife.OnClick
+import butterknife.Unbinder
+import com.x5bart.translatenordic.R
+import java.lang.reflect.Method
+import com.x5bart.translatenordic.model.TranslateEngine as TranslateEngine1
 
 /**
  * Created by Andrey Antonenko on 01.12.2016.
@@ -50,34 +55,34 @@ import androidx.fragment.app.Fragment
 
 class TranslateFragment : Fragment() {
 
-//    @BindView(R.id.from_lang)
-//    internal var fromLang: TextView? = null
-//    @BindView(R.id.to_lang)
-//    internal var toLang: TextView? = null
-//    @BindView(R.id.switch_lang)
-//    internal var switchLang: ImageView? = null
-//    @BindView(R.id.input_text)
-//    internal var inputText: EditText? = null
-//    @BindView(R.id.out_text)
-//    internal var outText: TextView? = null
-//    @BindView(R.id.translate)
-//    internal var translate: Button? = null
-//    @BindView(R.id.out_container)
-//    internal var outContainer: CardView? = null
-//    @BindView(R.id.yandex_service)
-//    internal var yandexService: TextView? = null
-//    @BindView(R.id.auto)
-//    internal var auto: TextView? = null
-//    @BindView(R.id.favorite)
-//    internal var favorite: ImageView? = null
-//    @BindView(R.id.content)
-//    internal var content: LinearLayout? = null
-//    @BindView(R.id.emptyView)
-//    internal var emptyView: RelativeLayout? = null
+    @BindView(R.id.from_lang)
+    internal var fromLang: TextView? = null
+    @BindView(R.id.to_lang)
+    internal var toLang: TextView? = null
+    @BindView(R.id.switch_lang)
+    internal var switchLang: ImageView? = null
+    @BindView(R.id.input_text)
+    internal var inputText: EditText? = null
+    @BindView(R.id.out_text)
+    internal var outText: TextView? = null
+    @BindView(R.id.translate)
+    internal var translate: Button? = null
+    @BindView(R.id.out_container)
+    internal var outContainer: CardView? = null
+    @BindView(R.id.yandex_service)
+    internal var yandexService: TextView? = null
+    @BindView(R.id.auto)
+    internal var auto: TextView? = null
+    @BindView(R.id.favorite)
+    internal var favorite: ImageView? = null
+    @BindView(R.id.content)
+    internal var content: LinearLayout? = null
+    @BindView(R.id.emptyView)
+    internal var emptyView: RelativeLayout? = null
 
     private var fromLangSelected: Lang? = null
     private var toLangSelected: Lang? = null
-    private var dlg: ProgressDialog? = null
+    private var dlg: AlertDialog? = null
     private var isAuto: Boolean = false
 
     private var connectivityChangeFilter: IntentFilter? = null
@@ -90,40 +95,44 @@ class TranslateFragment : Fragment() {
         }
     }
 
-    fun onCreate(@Nullable savedInstanceState: Bundle) {
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         connectivityChangeFilter = IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION)
     }
 
-    @Nullable
-    fun onCreateView(inflater: LayoutInflater, @Nullable container: ViewGroup, @Nullable savedInstanceState: Bundle): View {
+
+     override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         val rootView = inflater.inflate(R.layout.translator_layout, container, false)
         unbinder = ButterKnife.bind(this, rootView)
 
-        dlg = ProgressDialog(getContext())
+//        dlg = ProgressDialog(context)
         dlg!!.setTitle(R.string.dialog_title)
-        dlg!!.setMessage(getContext().getString(R.string.dialog_message))
+        dlg!!.setMessage(context?.getString(R.string.dialog_message))
         dlg!!.setCancelable(false)
 
         return rootView
     }
 
-    fun onStart() {
+    override fun onStart() {
         super.onStart()
-        getActivity().registerReceiver(connectionReceiver, connectivityChangeFilter)
+        activity?.registerReceiver(connectionReceiver, connectivityChangeFilter)
     }
 
-    fun onStop() {
+    override fun onStop() {
         super.onStop()
-        getActivity().unregisterReceiver(connectionReceiver)
+        activity?.unregisterReceiver(connectionReceiver)
     }
 
-    fun onDestroyView() {
+    override fun onDestroyView() {
         super.onDestroyView()
         unbinder!!.unbind()
     }
 
-    fun onViewCreated(view: View, @Nullable savedInstanceState: Bundle) {
+    override fun onViewCreated(view: View,  savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         updateInfo()
     }
@@ -131,7 +140,7 @@ class TranslateFragment : Fragment() {
     private fun updateInfo() {
         dlg!!.show()
         val params = HashMap<String, String>()
-        params["key"] = TranslateEngine.getCurrentApiKey()
+        params["key"] = TranslateEngine1.currentApiKey()
         params["ui"] = "ru"
 
         API.sendRequest(Method.GET_LANGS, params, object : API.OnRequestComplete() {
@@ -217,7 +226,7 @@ class TranslateFragment : Fragment() {
         if (!TextUtils.isEmpty(text) && toLangSelected != null) {
             dlg!!.show()
             val params = HashMap<String, String>()
-            params["key"] = TranslateEngine.getCurrentApiKey()
+            params["key"] = TranslateEngine1.getCurrentApiKey()
             params["text"] = text
             if (fromLangSelected != null && !isAuto) {
                 params["lang"] = String.format(

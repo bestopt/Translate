@@ -1,55 +1,49 @@
 package com.x5bart.translatenordic.model
 
 
-
 import com.activeandroid.Model
 import com.activeandroid.annotation.Column
 import com.activeandroid.annotation.Table
 import com.activeandroid.query.Select
 
-class Lang: Model {
+@Table(name = "Lang")
+class Lang : Model {
+    @Column
+    var langId: String = ""
+        internal set
+    @Column
+    var title: String = ""
+        internal set
 
-    var langId:String = ""
-        internal set
-    var title:String =""
-        internal set
     constructor() : super() {}
-    constructor(name:String, value:String) : super() {
+
+    constructor(name: String, value: String) : super() {
         this.langId = name
         this.title = value
-        if (!isHere(name))
-        {
+        if (!isHere(name)) {
             this.save()
         }
     }
+
     companion object {
-        fun isHere(name:String):Boolean {
+
+        fun isHere(name: String): Boolean {
             return Select().from(Lang::class.java).where("langId = ?", name).exists()
         }
-        fun getTitle(langId:String):String {
-            val lang = Select().from(Lang::class.java).where("langId = ?", langId).executeSingle()
-            if (lang != null)
-            {
-                return lang.title
-            }
-            else
-            {
-                return ""
-            }
+
+        fun getTitle(langId: String): String {
+            val lang =
+                Select().from(Lang::class.java).where("langId = ?", langId).executeSingle<Lang>()
+            return lang?.title ?: ""
         }
-        val langs:List<Lang>
+
+        val langs: List<Lang>
             get() {
-                val langs = Select().from(Lang::class.java).execute()
-                if (langs != null)
-                {
-                    return langs
-                }
-                else
-                {
-                    return emptyList<Lang>()
-                }
+                val langs = Select().from(Lang::class.java).execute<Lang>()
+                return langs ?: emptyList()
             }
-        fun getLangById(langId:String):Lang {
+
+        fun getLangById(langId: String): Lang {
             return Select().from(Lang::class.java).where("langId = ?", langId).executeSingle()
         }
     }
