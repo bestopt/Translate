@@ -162,7 +162,7 @@ class TranslateFragment : Fragment() {
            override fun onError(error: ResponseError) {
                 content!!.visibility = View.GONE
                 emptyView!!.visibility = View.VISIBLE
-                Toast.makeText(getActivity(), error.getErrorMessage(), Toast.LENGTH_SHORT).show()
+                Toast.makeText(activity, error.getErrorMessage(), Toast.LENGTH_SHORT).show()
                 dlg!!.dismiss()
             }
         })
