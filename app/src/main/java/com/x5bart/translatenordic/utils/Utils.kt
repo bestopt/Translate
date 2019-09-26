@@ -44,7 +44,7 @@ object Utils {
 
     fun hasConnection(): Boolean {
         val conMgr =
-            MainApp.getInstance().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+            MainApp.instance!!.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         val networkInfo = conMgr.activeNetworkInfo
         return networkInfo != null && networkInfo.isConnectedOrConnecting
     }

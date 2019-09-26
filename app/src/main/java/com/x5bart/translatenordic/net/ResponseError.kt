@@ -4,8 +4,7 @@ package com.x5bart.translatenordic.net
 class ResponseError {
     var errorCode: ServerError? = null
         private set
-    var errorMessage: String? = null
-        private set
+    private var errorMessage: String? = null
 
     constructor(errorCode: Int, errorMessage: String) {
         this.errorCode = ServerError.fromCode(errorCode)
@@ -23,6 +22,9 @@ class ResponseError {
     constructor(error: ServerError, errorMessage: String) {
         this.errorCode = error
         this.errorMessage = errorMessage
+    }
+    fun getErrorMessage():String?{
+        return errorMessage
     }
 
 

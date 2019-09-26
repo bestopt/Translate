@@ -9,11 +9,18 @@ import com.activeandroid.query.Select
 @Table(name = "Lang")
 class Lang : Model {
     @Column
-    var langId: String = ""
-        internal set
+     private var langId: String = ""
+
     @Column
-    var title: String = ""
-        internal set
+   private var title: String = ""
+
+    fun getLangId(): String {
+        return langId
+    }
+
+    fun getTitle(): String {
+        return title
+    }
 
     constructor() : super() {}
 
@@ -31,14 +38,14 @@ class Lang : Model {
             return Select().from(Lang::class.java).where("langId = ?", name).exists()
         }
 
-        fun getTitle(langId: String): String {
+         public fun getTitle(langId: String): String {
             val lang =
                 Select().from(Lang::class.java).where("langId = ?", langId).executeSingle<Lang>()
             return lang?.title ?: ""
         }
 
 
-        val langs: List<Lang>
+        val getLangs: List<Lang>
             get() {
                 val langs = Select().from(Lang::class.java).execute<Lang>()
                 return langs ?: emptyList()

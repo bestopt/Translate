@@ -47,10 +47,16 @@ import butterknife.ButterKnife
 import butterknife.OnClick
 import butterknife.Unbinder
 import com.x5bart.translatenordic.R
+import com.x5bart.translatenordic.model.Favorite
 import com.x5bart.translatenordic.net.API
 import com.x5bart.translatenordic.net.API.sendRequest
 import com.x5bart.translatenordic.net.ResponseError
 import com.x5bart.translatenordic.net.retrofit.ResponseItem
+import com.x5bart.translatenordic.net.retrofit.SingleItemResponse
+import com.x5bart.translatenordic.ui.dialog.ChooserLanguageDialog
+import com.x5bart.translatenordic.ui.dialog.FavChooserDialog
+import com.x5bart.translatenordic.ui.dialog.OnFavPressed
+import com.x5bart.translatenordic.ui.dialog.OnLanguageSelected
 import java.lang.reflect.Method
 import com.x5bart.translatenordic.model.TranslateEngine as TranslateEngine1
 
@@ -145,7 +151,7 @@ class TranslateFragment : Fragment() {
     private fun updateInfo() {
         dlg!!.show()
         val params = HashMap<String, String>()
-        params["key"] = TranslateEngine1.currentApiKey()
+        params["key"] = TranslateEngine1.getCurrentApiKey()
         params["ui"] = "ru"
 
         sendRequest(com.x5bart.translatenordic.net.Method.GET_LANGS, params, object : API.OnRequestComplete {
@@ -176,24 +182,24 @@ class TranslateFragment : Fragment() {
 
     @OnClick(R.id.from_lang)
     fun openFromLang() {
-        val dialog = ChooserLanguageDialog.getInstance(object : OnLanguageSelected() {
-            fun onSelect(lang: Lang) {
+        val dialog = ChooserLanguageDialog.getInstance(object : OnLanguageSelected {
+           override fun onSelect(lang: Lang) {
                 fromLangSelected = lang
                 updateViews()
             }
         })
-        dialog.show(getFragmentManager(), "")
+        dialog.show(fragmentManager!!, "")
     }
 
     @OnClick(R.id.to_lang)
-    fun openToLang() {
-        val dialog = ChooserLanguageDialog.getInstance(object : OnLanguageSelected() {
-            fun onSelect(lang: Lang) {
+     fun openToLang() {
+        val dialog = ChooserLanguageDialog.getInstance(object : OnLanguageSelected {
+           override fun onSelect(lang: Lang) {
                 toLangSelected = lang
                 updateViews()
             }
         })
-        dialog.show(getFragmentManager(), "")
+        dialog.show(fragmentManager!!, "")
     }
 
     @OnClick(R.id.switch_lang)
@@ -211,18 +217,18 @@ class TranslateFragment : Fragment() {
 
         Favorite(fromLangSelected!!.getLangId(), toLangSelected!!.getLangId())
 
-        val dialog = FavChooserDialog.getInstance(object : OnFavPressed() {
-            fun onPressed(favorite: Favorite) {
-                fromLangSelected = Lang.getLangById(favorite.getFromId())
-                toLangSelected = Lang.getLangById(favorite.getToId())
+        val dialog = FavChooserDialog.getInstance(object : OnFavPressed {
+          override  fun onPressed(favorite: Favorite) {
+                fromLangSelected = Lang.getLangById(favorite.fromId)
+                toLangSelected = Lang.getLangById(favorite.toId)
                 updateViews()
             }
 
-            fun onLongPressed(favorite: Favorite) {
+            override fun onLongPressed(favorite: Favorite) {
                 deleteFav(favorite)
             }
         })
-        dialog.show(getFragmentManager(), "")
+        dialog.show(fragmentManager!!, "")
     }
 
     @OnClick(R.id.translate)
@@ -243,15 +249,15 @@ class TranslateFragment : Fragment() {
                 params["lang"] = toLangSelected!!.getLangId()
             }
 
-            sendRequest(Method.TRANSLATE, params, object : API.OnRequestComplete() {
-                fun onSuccess(response: ResponseItem) {
+            sendRequest(com.x5bart.translatenordic.net.Method.TRANSLATE, params, object : API.OnRequestComplete {
+                 override fun onSuccess(response: ResponseItem) {
                     val out = (response as SingleItemResponse).text
                     outText!!.setText(out)
                     outContainer!!.setVisibility(View.VISIBLE)
                     dlg!!.dismiss()
                 }
 
-                fun onError(error: ResponseError) {
+                override fun onError(error: ResponseError) {
                     Toast.makeText(getActivity(), error.getErrorMessage(), Toast.LENGTH_SHORT)
                         .show()
                     dlg!!.dismiss()
@@ -268,9 +274,9 @@ class TranslateFragment : Fragment() {
 
     private fun updateViews() {
         if (isAuto) {
-            auto!!.setTextColor(getContext().getResources().getColor(R.color.colorAccent))
+            auto!!.setTextColor(getContext()!!.getResources().getColor(R.color.colorAccent))
         } else {
-            auto!!.setTextColor(getContext().getResources().getColor(R.color.colorPrimary))
+            auto!!.setTextColor(getContext()!!.getResources().getColor(R.color.colorPrimary))
         }
         if (fromLangSelected != null) {
             fromLang!!.setText(fromLangSelected!!.getTitle())
