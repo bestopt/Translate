@@ -37,6 +37,7 @@ class Lang : Model {
             return lang?.title ?: ""
         }
 
+
         val langs: List<Lang>
             get() {
                 val langs = Select().from(Lang::class.java).execute<Lang>()

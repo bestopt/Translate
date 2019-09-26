@@ -25,6 +25,7 @@ import androidx.cardview.widget.CardView
 import androidx.fragment.app.Fragment
 import com.x5bart.translatenordic.model.Lang
 
+
 //import com.andrey.translator.R
 //import com.andrey.translator.model.Favorite
 //import com.andrey.translator.model.Lang
@@ -46,6 +47,10 @@ import butterknife.ButterKnife
 import butterknife.OnClick
 import butterknife.Unbinder
 import com.x5bart.translatenordic.R
+import com.x5bart.translatenordic.net.API
+import com.x5bart.translatenordic.net.API.sendRequest
+import com.x5bart.translatenordic.net.ResponseError
+import com.x5bart.translatenordic.net.retrofit.ResponseItem
 import java.lang.reflect.Method
 import com.x5bart.translatenordic.model.TranslateEngine as TranslateEngine1
 
@@ -143,8 +148,8 @@ class TranslateFragment : Fragment() {
         params["key"] = TranslateEngine1.currentApiKey()
         params["ui"] = "ru"
 
-        API.sendRequest(Method.GET_LANGS, params, object : API.OnRequestComplete() {
-            fun onSuccess(response: ResponseItem) {
+        sendRequest(com.x5bart.translatenordic.net.Method.GET_LANGS, params, object : API.OnRequestComplete {
+            override fun onSuccess(response: ResponseItem) {
                 content!!.visibility = View.VISIBLE
                 emptyView!!.visibility = View.GONE
                 toLangSelected = Lang.getLangById("ru")
@@ -154,7 +159,7 @@ class TranslateFragment : Fragment() {
                 dlg!!.dismiss()
             }
 
-            fun onError(error: ResponseError) {
+           override fun onError(error: ResponseError) {
                 content!!.visibility = View.GONE
                 emptyView!!.visibility = View.VISIBLE
                 Toast.makeText(getActivity(), error.getErrorMessage(), Toast.LENGTH_SHORT).show()
@@ -238,7 +243,7 @@ class TranslateFragment : Fragment() {
                 params["lang"] = toLangSelected!!.getLangId()
             }
 
-            API.sendRequest(Method.TRANSLATE, params, object : API.OnRequestComplete() {
+            sendRequest(Method.TRANSLATE, params, object : API.OnRequestComplete() {
                 fun onSuccess(response: ResponseItem) {
                     val out = (response as SingleItemResponse).text
                     outText!!.setText(out)

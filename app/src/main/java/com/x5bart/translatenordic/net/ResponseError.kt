@@ -1,6 +1,5 @@
 package com.x5bart.translatenordic.net
 
-import com.x5bart.translatenordic.net.retrofit.ServerError
 
 class ResponseError {
     var errorCode: ServerError? = null
@@ -25,4 +24,7 @@ class ResponseError {
         this.errorCode = error
         this.errorMessage = errorMessage
     }
-}
+
+
+    }
+

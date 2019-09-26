@@ -1,6 +1,7 @@
 package com.x5bart.translatenordic.net
 
 import com.x5bart.translatenordic.net.retrofit.ResponseItem
+import com.x5bart.translatenordic.utils.Utils
 import java.util.HashMap
 
 object API {
@@ -12,7 +13,7 @@ object API {
 
     fun sendRequest(
         method: Method,
-        params: HashMap<String, String>, @NonNull listener: OnRequestComplete
+        params: HashMap<String, String>, listener: OnRequestComplete
     ) {
 
         if (!Utils.hasConnection()) {

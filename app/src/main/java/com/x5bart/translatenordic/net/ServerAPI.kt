@@ -17,4 +17,3 @@ interface ServerAPI {
     abstract fun translate(@Query("key") key: String, @Query("text") text: String, @Query("lang") lang: String): Call<SingleItemResponse>
 }
 
-}
