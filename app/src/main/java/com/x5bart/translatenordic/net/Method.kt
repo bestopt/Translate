@@ -1,9 +1,6 @@
 package com.x5bart.translatenordic.net
 
-import com.x5bart.translatenordic.net.retrofit.ListItemDeserializer
-import com.x5bart.translatenordic.net.retrofit.ListItemResponse
-import com.x5bart.translatenordic.net.retrofit.SingleItemDeserializer
-import com.x5bart.translatenordic.net.retrofit.SingleItemResponse
+import com.x5bart.translatenordic.net.retrofit.*
 import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
@@ -19,16 +16,9 @@ enum class Method constructor(private val itemType: ItemType) {
             )
         }
     },
-    DETECT(ItemType.SINGLE) {
-        override fun request(serverAPI: ServerAPI?, params: HashMap<String, String>): Call<SingleItemResponse> {
-            return serverAPI!!.detect(
-                params["key"]!!,
-                params["text"]!!
-            )
-        }
-    },
+
     TRANSLATE(ItemType.SINGLE) {
-        override fun request(serverAPI: ServerAPI?, params: HashMap<String, String>): Call<SingleItemResponse> {
+         override fun request(serverAPI: ServerAPI?, params: HashMap<String, String>): Call<SingleItemResponse> {
             return serverAPI!!.translate(
                 params["key"]!!,
                 params["text"]!!,
